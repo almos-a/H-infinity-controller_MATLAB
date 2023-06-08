@@ -10,7 +10,7 @@ A = [0 0 1.132 0 -1;
     0 0.0485 0 -0.8556 -1.013;
     0 -0.2909 0 1.0532 -0.6859];
 B = [0 0 0;
-    -0.12 0 0;
+    -0.12 1 0;
     0 0 0;
     4.419 0 -1.665;
     1.575 0 -0.0732];
@@ -20,14 +20,14 @@ D = zeros(3,3);
 G = ss(A,B,C,D);
 
 % design of weighting filters
-Ms = 10^-4; ws = 2.5*10^-4;
+Ms = 10^-4; ws = 10^-4;
 nws = ws/Ms;
 dws = [1 ws];
 Wss = tf(nws,dws); % to shape sensitivity
-% Ws = [Wss 0 0;0 Wss 0;0 0 (10*Wss)];
-Ws=eye(3)*(tf(nws,dws));
+% Ws = [Wss 0 0;0 Wss 0;0 0 (10*Wss)]; % used for design 3 and 4
+Ws=eye(3)*(tf(nws,dws)); % applicable for design 1 and 2
 
-Mk = 10^2; wk = 10^2; c = 10^3;
+Mk = 10^3; wk = 10^2; c = 10^3;
 nwk = [1 wk];
 dwk = [1 c*wk];
 wk = (c/Mk)*(tf(nwk,dwk)); % to shape control sensitivity
@@ -43,14 +43,13 @@ nmeas = 3;
 nu = 3;
 gmn = 0; %gamma min val
 gmx = 10; %gamma max val
-tol = 0.001; %rel error tol
+tol = 0.0001; %rel error tol
 gmr = [gmn, gmx]; % gamma range
 
-% opt = hinfsynOptions('AbsTol',1e-4);
-opt = hinfsynOptions('RelTol',0.05);
+% opt = hinfsynOptions('AbsTol',tol);
+opt = hinfsynOptions('RelTol',tol);
 % [K,CL,gopt] = hinfsyn(P,nmeas,nu,gmn,gmx,tol);
-% [K,CL,gopt] = hinfsyn(P,nmeas,nu,gmr,opt);
-[K,CL,gopt] = hinfsyn(P,nmeas,nu,opt);
+[K,CL,gopt] = hinfsyn(P,nmeas,nu,gmr,opt);
 
 % Plot
 % step response
@@ -66,7 +65,7 @@ KS = K*S;
 
 figure % input output plot
 subplot(2,1,1)
-step(T(1,1),T(2,1),T(3,1)); xlim([0,2]);
+step(T(1,1),T(2,1),T(3,1));
 grid
 legend('y1','y2','y3')
 xlabel('Time (s)');ylabel('Output y')
@@ -95,7 +94,7 @@ grid
 title('Sensitivity and scaled constraint')
 legend('s','gopt/Ws')
 figure
-sigma(T,gopt/Wks)
+sigma(KS,gopt/Wks)
 grid
 title('Control Sensitivity and scaled constraint')
 legend('cs','gopt/Wks')
