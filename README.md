@@ -1,5 +1,5 @@
 # H-infinity-controller_MATLAB
-The H-infinity control problem solution seeks to find a controller, K wgich minimises the H-Inf norm of a closed loop transfer function.
+The H-infinity control problem solution seeks to find a controller, K which minimises the H-Inf norm of a closed loop transfer function.
 The H-infinity suboptimal control problem solution sloution simply seeks to find the controller, K such that the H-inf norm of the closed-loop tf satisfies a condition of being less than or equal to a goptimum value.
 The optimal problen therefore aims at finding the minimum value of goptimum.
 
